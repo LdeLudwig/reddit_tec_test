@@ -43,20 +43,33 @@ def identify_IDs(grid):
         return nodes, edges
     except Exception as e:
         logging.error(str(e))
+        return None, None
 
 
 def make_graph(nodes, edges):
     dot = graphviz.Digraph(format='png')
 
-    for node in nodes.items():
-        if node['type'] == 'Building':
-            dot.node(node['id'], label=node['id'], shape='cicle', style='filled', fillcolor='blue')
-        elif node['type'] == 'Storage':
-            dot.node(node['id'], label=node['id'], shape='box', style='filled', fillcolor='red')
-    
-    for neighbor, weight in edges.items():
-        dot.edge(node['id'], neighbor['id'], label=str(weight))
-    pass
+    try:
+        for (x,y), node in nodes.items():
+            if node['type'] == 'Building':
+                label = f"{node['id']}"
+                dot.node(f"{x},{y}", label, shape='cicle', style='filled', fillcolor='blue')
+            
+            elif node['type'] == 'Storage':
+                label = f"{node['id']}"
+                dot.node(f"{x},{y}", label, shape='box', style='filled', fillcolor='red')
+            
+            elif node['type'] == 'Road':
+                label = f"{node['weight']}"
+                dot.node(f"{x},{y}", label, shape='diamond', style='filled', fillcolor='green')
+
+        for (node,connections) in edges.items():
+            for (neighbor, weight) in connections:
+                dot.edge(f"{neighbor[0]}, {neighbor[1]}", f"{neighbor[0]},{neighbor[1]}", label=str(weight))
+
+        dot.render('road_netword', view=True)
+    except Exception as e:
+        logging.error(str(e))
 
 def main():
     grid=[

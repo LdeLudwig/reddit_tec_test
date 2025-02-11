@@ -14,7 +14,15 @@ grid=[
     ]
 
 def main(grid):
+    """
+    Processes the grid to identify nodes and edges, then generates a graph visualization.
     
+    Args:
+        grid (list of list of str): A 2D grid representing buildings, warehouses, roads, and empty spaces.
+    
+    Logs:
+        Errors if nodes or edges cannot be identified.
+    """
     nodes, edges = identify_IDs(grid)
     if nodes and edges:
         make_graph(nodes, edges)

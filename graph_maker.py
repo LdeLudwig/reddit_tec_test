@@ -3,6 +3,17 @@ import logging
 from collections import defaultdict
 
 def identify_IDs(grid):
+    """
+    Identifies buildings, warehouses, and roads in a grid, and creates connections between them.
+    
+    Args:
+        grid (list of list of str): A 2D grid with strings representing buildings, warehouses, roads, or empty spaces.
+    
+    Returns:
+        tuple: (nodes, edges) where:
+            - nodes is a dictionary with node coordinates and their types.
+            - edges is a dictionary with connections between nodes.
+    """
     nodes = {}
     edges = defaultdict(list) # Using a defaultdict to handle missing keys
     road_nodes = set()
@@ -60,6 +71,16 @@ def identify_IDs(grid):
 
 
 def make_graph(nodes, edges):
+    """
+    Creates and renders a visual graph of nodes and their connections using Graphviz.
+    
+    Args:
+        nodes (dict): A dictionary of nodes with their coordinates and types.
+        edges (dict): A dictionary of node connections and their weights.
+    
+    Generates:
+        A PNG image of the road network with nodes and edges visualized.
+    """
     dot = graphviz.Digraph(format='png')
     try:
         for (x, y), node in nodes.items():

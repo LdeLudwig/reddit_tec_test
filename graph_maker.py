@@ -19,7 +19,8 @@ def identify_IDs(grid):
                 elif cell.startswith("W"):
                    nodes[(x,y)] = {"type": "Warehouse", "id": cell}
                 elif cell.startswith("R"):
-                   nodes[(x,y)] = {"type": "Road", "width": int(cell[1:])}
+                   width = int(cell[1:])
+                   nodes[(x,y)] = {"type": "Road", "width": width}
                    road_nodes.add((x,y))
                 else:
                     nodes[(x,y)] = {"type": "Empty"}
@@ -33,9 +34,19 @@ def identify_IDs(grid):
             # Identify intersections
             if len(connected_roads) >2:
                 nodes[(x,y)]["type"] = "Intersection"
-            for n, weigth in connected_roads:
-                edges[(x,y)].append((n, weigth))
-                
+            
+            for neighbor, width in connected_roads:
+                current_width = nodes[(x,y)]["width"]
+            
+                if current_width != width:
+                    mid_node = (x + neighbor[0]) / 2, (y + neighbor[1]) / 2
+                    nodes[mid_node] = {"type": "Transition", "width": width}
+
+                    edges[(x,y)].append((mid_node, current_width))
+                    edges[mid_node].append((neighbor, width))
+                else:
+                    edges[(x,y)].append((neighbor, width))
+
         # Connect building and warehouses to the roads
         for (x,y), node in nodes.items():
             if node["type"] in ["Building", "Warehouse"]:
@@ -62,6 +73,8 @@ def make_graph(nodes, edges):
                 dot.node(f"{x},{y}", label, shape='box', style='filled', fillcolor='red')
             elif node["type"] == "Intersection":
                 dot.node(f"{x},{y}", shape='circle', style='filled', fillcolor='gray')
+            elif node["type"] == "Transition":
+                dot.node(f"{x},{y}", shape='diamond', style='filled', fillcolor='green')
         
         for node, connections in edges.items():
             for neighbor, weight in connections:

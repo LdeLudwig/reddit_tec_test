@@ -2,9 +2,6 @@ import graphviz
 import logging
 from collections import defaultdict
 
-# Initialize logging
-logging.basicConfig(filename='./log/graph_maker.log',level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
-
 def identify_IDs(grid):
     nodes = {}
     edges = defaultdict(list) # Using a defaultdict to handle missing keys
@@ -83,20 +80,3 @@ def make_graph(nodes, edges):
         dot.render('road_network', view=True)
     except Exception as e:
         logging.error(str(e))
-
-def main():
-    grid=[
-        ["B1", "W1", "R2", "R2", "R1"],
-        ["R1", "R1", "R2", "R1", "0"],
-        ["R1", "R2", "R1", "B2", "R1"],
-        ["R2", "W2", "R1", "B2", "B2"],
-        ["B3", "B3", "0", "R1", "0"]
-    ]
-    nodes, edges = identify_IDs(grid)
-    if nodes and edges:
-        make_graph(nodes, edges)
-    else:
-        logging.error("Failed to identify nodes or edges.")
-
-if __name__ == "__main__":
-    main()
